@@ -2,6 +2,8 @@ import kfp.dsl as dsl
 from typing import *
 from enum import Enum
 
+__all__ = ["VolumeMode", "claim", "load"]
+
 
 class VolumeMode(Enum):
     ReadOnlyMany = "r"

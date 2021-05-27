@@ -1,10 +1,13 @@
+import kfp
 import kfp.dsl as dsl
 from typing import *
+
+__all__ = ["Node"]
 
 
 class Node:
 
-    repr_indent: int = 4
+    repr_indent: int = 2
     _volume_registry: Dict[str, dsl.PipelineVolume]
 
     def __init__(self) -> None:
@@ -19,7 +22,7 @@ class Node:
                 object.__setattr__(self, key, value)
                 self._volume_registry[key] = value
             else:
-                raise AttributeError("Volumes must be added in `__init__`.")
+                raise AttributeError("Volumes can be added after `__init__()`.")
         else:
             object.__setattr__(self, key, value)
 
@@ -43,7 +46,26 @@ class Node:
         for key, value in self.__dict__.items():
             if key.startswith("_") or key in self._volume_registry:
                 continue
-            lines.append(" " * self.repr_indent + f"{key}: {value}")
-        lines.extend(self.extra_repr)
+            if isinstance(value, Node):
+                lines.append(" " * self.repr_indent + f"{key}:")
+                for l in repr(value).split("\n"):
+                    lines.append(" " * 2 * self.repr_indent + l)
+            else:
+                lines.append(" " * self.repr_indent + f"{key}: {value}")
+        lines.extend(self.extra_repr())
 
         return "\n".join(lines)
+
+    @classmethod
+    def script(cls, **kwargs) -> Callable:
+        if "name" not in kwargs:
+            kwargs["name"] = cls.__class__.__name__
+
+        if "description" not in kwargs:
+            kwargs["description"] = cls.__doc__
+
+        return kfp.dsl.pipeline(**kwargs)(cls)
+
+    @classmethod
+    def save(cls, filename, **kwargs) -> None:
+        kfp.compiler.Compiler().compile(cls, filename, **kwargs)
