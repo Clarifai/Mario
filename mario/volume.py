@@ -19,6 +19,7 @@ _enum_to_dsl_volume_mode = {
 def claim(
     name: str, size: str, mode: Union[str, VolumeMode] = "rw", **kwargs
 ) -> dsl.PipelineVolume:
+
     if isinstance(mode, str):
         mode = VolumeMode(mode)
     assert isinstance(
