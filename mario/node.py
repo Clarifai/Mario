@@ -56,16 +56,14 @@ class Node:
 
         return "\n".join(lines)
 
-    @classmethod
-    def script(cls, **kwargs) -> Callable:
+    def script(self, **kwargs) -> Callable:
         if "name" not in kwargs:
-            kwargs["name"] = cls.__class__.__name__
+            kwargs["name"] = self.__class__.__name__
 
         if "description" not in kwargs:
-            kwargs["description"] = cls.__doc__
+            kwargs["description"] = self.__doc__
 
-        return kfp.dsl.pipeline(**kwargs)(cls)
+        return kfp.dsl.pipeline(**kwargs)(self)
 
-    @classmethod
-    def save(cls, filename, **kwargs) -> None:
-        kfp.compiler.Compiler().compile(cls, filename, **kwargs)
+    def save(self, filename, **kwargs) -> None:
+        kfp.compiler.Compiler().compile(self, filename, **kwargs)
