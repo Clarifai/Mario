@@ -13,7 +13,7 @@ class Node:
     def flow(self):
         raise NotImplementedError(f"Method `flow` is not implemented.")
 
-    def __setattr__(self, key: str, value: Any):
+    def __setattr__(self, key: str, value: Any) -> None:
         if isinstance(value, dsl.PipelineVolume):
             if hasattr(self, "_volume_registry"):
                 object.__setattr__(self, key, value)
@@ -23,7 +23,7 @@ class Node:
         else:
             object.__setattr__(self, key, value)
 
-    def __delattr__(self, key):
+    def __delattr__(self, key) -> None:
         if key in self._volume_registry:
             del self._volume_registry[key]
         object.__delattr__(self, key)
