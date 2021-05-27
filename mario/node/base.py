@@ -1,4 +1,3 @@
-import kfp
 import kfp.dsl as dsl
 from typing import *
 
@@ -6,15 +5,17 @@ __all__ = ["Node"]
 
 
 class Node:
+    """Node: Base class for all kubeflow pipeline components"""
 
     repr_indent: int = 2
     _volume_registry: Dict[str, dsl.PipelineVolume]
 
     def __init__(self) -> None:
         self._volume_registry = {}
+        self.__name__ = self.__class__.__name__
 
-    def flow(self):
-        raise NotImplementedError(f"Method `flow` is not implemented.")
+    def __call__(self, *args, **kwargs) -> None:
+        raise NotImplementedError(f"Method `__call__` is not implemented.")
 
     def __setattr__(self, key: str, value: Any) -> None:
         if isinstance(value, dsl.PipelineVolume):
@@ -30,9 +31,6 @@ class Node:
         if key in self._volume_registry:
             del self._volume_registry[key]
         object.__delattr__(self, key)
-
-    def __call__(self, *args, **kwargs) -> Any:
-        return self.flow(*args, **kwargs)
 
     def extra_repr(self) -> List[str]:
         return []
@@ -55,15 +53,3 @@ class Node:
         lines.extend(self.extra_repr())
 
         return "\n".join(lines)
-
-    def script(self, **kwargs) -> Callable:
-        if "name" not in kwargs:
-            kwargs["name"] = self.__class__.__name__
-
-        if "description" not in kwargs:
-            kwargs["description"] = self.__doc__
-
-        return kfp.dsl.pipeline(**kwargs)(self)
-
-    def save(self, filename, **kwargs) -> None:
-        kfp.compiler.Compiler().compile(self, filename, **kwargs)
