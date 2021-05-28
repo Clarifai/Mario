@@ -14,7 +14,8 @@ class Node:
         self._volume_registry = {}
         self.__name__ = self.__class__.__name__
 
-    def __call__(self, *args, **kwargs) -> None:
+    def __call__(self) -> Any:
+
         raise NotImplementedError(f"Method `__call__` is not implemented.")
 
     def __setattr__(self, key: str, value: Any) -> None:
