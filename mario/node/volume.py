@@ -4,8 +4,8 @@ from typing import *
 import kfp.dsl as dsl
 
 
-class ClaimVolume(Node):
-    """ClaimVolume: Wrapper of VolumeOp"""
+class VolumeClaim(Node):
+    """VolumeClaim: Wrapper of VolumeOp"""
 
     def __init__(
         self, name: str, size: str, mode: Union[str, VolumeMode] = "rw", **kwargs
@@ -24,8 +24,8 @@ class ClaimVolume(Node):
         return self.volume
 
 
-class LoadVolume(Node):
-    """LoadVolume: load existing volume"""
+class VolumeLoad(Node):
+    """VolumeLoad: load existing volume"""
 
     def __init__(self, name: str, **kwargs) -> None:
         super().__init__()
