@@ -3,6 +3,8 @@ from .base import Node
 from typing import *
 import kfp.dsl as dsl
 
+__all__ = ["VolumeClaim", "VolumeLoad"]
+
 
 class VolumeClaim(Node):
     """VolumeClaim: Wrapper of VolumeOp"""

@@ -10,11 +10,15 @@ def _kwargs_to_arglist(
     for name in arg_names:
         if name in arg_values:
             arglist.append(f"--{name}")
-            value = arg_values[name]
+            value = arg_values.pop(name)
             if isinstance(value, (list, tuple)):
                 arglist.extend([v for v in value])
             else:
                 arglist.append(value)
+    if len(arg_values) > 0:
+        raise KeyError(
+            f"Keyword(s) `{', '.join(key for key in arg_values)}` did not match any given args `{', '.join(arg_names)}`"
+        )
     return arglist
 
 
@@ -31,7 +35,7 @@ class Compute(Node):
         self.name = name
         self.image = image
         self.command = command
-        self.arg_names = arg_names
+        self.arg_names = [] if arg_names is None else arg_names
         self.volume_name_to_mount_point = {}
         self._mnt_to_vol = {}
         if mount_point_to_volumes:
@@ -46,7 +50,7 @@ class Compute(Node):
 
     def flow(self, **kwargs):
 
-        arglist = _kwargs_to_arglist(self.arg_names, kwargs) if self.arg_names else None
+        arglist = _kwargs_to_arglist(self.arg_names, kwargs)
 
         self._container_op = dsl.ContainerOp(
             name=self.name,

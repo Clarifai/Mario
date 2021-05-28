@@ -5,7 +5,7 @@ __all__ = ["script"]
 
 
 def script(function: Callable, filename: str, **kwargs) -> None:
-    """Turn node Callable class to pipeline function."""
+    """Turn annotated Callable class to pipeline function."""
     name = function.__name__
     description = function.__doc__
 
