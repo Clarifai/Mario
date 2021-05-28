@@ -3,6 +3,14 @@ from typing import *
 import kfp.dsl as dsl
 
 
+def _kwargs_to_arglist(kwargs):
+    arglist = []
+    for key, value in kwargs.items():
+        arglist.append(f"--{key}")
+        arglist.append(value)
+    return arglist
+
+
 class FunctionNode(Node):
     def __init__(
         self,
@@ -27,12 +35,9 @@ class FunctionNode(Node):
             self._mnt_to_vol[mount_point] = pvc
             setattr(self, pvc.name, pvc)
 
-    def __call__(self, **kwargs):
+    def flow(self, **kwargs):
 
-        arglist = []
-        for key, value in kwargs.items():
-            arglist.append(f"--{key}")
-            arglist.append(value)
+        arglist = _kwargs_to_arglist(kwargs)
 
         self._container_op = dsl.ContainerOp(
             name=self.name,

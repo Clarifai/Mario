@@ -14,9 +14,14 @@ class Node:
         self._volume_registry = {}
         self.__name__ = self.__class__.__name__
 
-    def __call__(self) -> Any:
+    def flow(self, **kwargs) -> Any:
+        raise NotImplementedError(f"Method `flow` is not implemented.")
 
-        raise NotImplementedError(f"Method `__call__` is not implemented.")
+    def __call__(self, *args, **kwargs) -> Any:
+        assert (
+            len(args) == 0
+        ), f"Only keyword args allowed in `__call__` but get args {args}."
+        return self.flow(**kwargs)
 
     def __setattr__(self, key: str, value: Any) -> None:
         if isinstance(value, dsl.PipelineVolume):

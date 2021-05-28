@@ -1,15 +1,14 @@
 import kfp
 from typing import *
-from .node import Node
 
 __all__ = ["script"]
 
 
-def script(node: Node, filename: str, **kwargs) -> Callable:
+def script(function: Callable, filename: str, **kwargs) -> None:
     """Turn node Callable class to pipeline function."""
-    name = node.__class__.__name__
-    description = node.__doc__
+    name = function.__name__
+    description = function.__doc__
 
-    tmp = kfp.dsl.pipeline(name=name, description=description)(node)
+    tmp = kfp.dsl.pipeline(name=name, description=description)(function)
 
     kfp.compiler.Compiler().compile(tmp, filename, **kwargs)

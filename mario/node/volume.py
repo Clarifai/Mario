@@ -16,6 +16,6 @@ class VolumeNode(Node):
         self._kwargs = kwargs
         self.volume = load("future_vol_placeholder")
 
-    def __call__(self) -> None:
+    def flow(self) -> None:
 
         self.volume = claim(self.name, self.size, self.mode, **self._kwargs)
