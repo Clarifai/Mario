@@ -1,5 +1,6 @@
 import kfp.dsl as dsl
 from typing import *
+import warnings
 
 __all__ = ["Node"]
 
@@ -21,7 +22,9 @@ class Node:
         assert (
             len(args) == 0
         ), f"Only keyword args allowed in `__call__` but get args {args}."
-        return self.flow(**kwargs)
+        with warnings.catch_warnings():
+            warnings.simplefilter(action="ignore", category=FutureWarning)
+            return self.flow(**kwargs)
 
     def __setattr__(self, key: str, value: Any) -> None:
         if isinstance(value, dsl.PipelineVolume):
