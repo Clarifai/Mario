@@ -2,6 +2,8 @@ from .base import Node
 from typing import *
 import kfp.dsl as dsl
 
+__all__ = ["Compute"]
+
 
 def _kwargs_to_arglist(
     arg_names: Union[List[str], Tuple[str]], arg_values: Dict[str, Any]

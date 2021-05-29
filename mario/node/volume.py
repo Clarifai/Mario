@@ -1,4 +1,4 @@
-from ..volume import *
+from ..volume import claim, load, VolumeMode
 from .base import Node
 from typing import *
 import kfp.dsl as dsl

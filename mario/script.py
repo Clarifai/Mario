@@ -1,10 +1,11 @@
 import kfp
 from typing import *
 
-__all__ = ["script"]
+
+__all__ = ["save"]
 
 
-def script(function: Callable, filename: str, **kwargs) -> None:
+def save(function: Callable, filename: str, **kwargs) -> None:
     """Turn annotated Callable class to pipeline function."""
     name = function.__name__
     description = function.__doc__
