@@ -1,19 +1,14 @@
 from setuptools import find_packages, setup
+from mario import __version__
 
 # load readme
 with open("README.md", "r") as f:
     long_description = f.read()
 
 
-def version() -> str:
-    import mario
-
-    return mario.__version__
-
-
 setup(
     name="mario",
-    version=version(),
+    version=__version__,
     description="Make kubeflow pipelines intuitive.",
     packages=find_packages(exclude=["tests"]),
     long_description=long_description,
