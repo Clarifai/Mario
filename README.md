@@ -197,7 +197,7 @@ def hello_world_pipeline(arg1: int, arg2: str):
 #### Save to file
 
 ```python
-kpf.compiler.Compiler().compile(hello_world_pipeline, 'test-hello-world-pvc.yaml')
+kfp.compiler.Compiler().compile(hello_world_pipeline, 'test-hello-world-pvc.yaml')
 ```
 
 ### With Mario
