@@ -213,7 +213,7 @@ f = mario.node.Compute('hello world',
 sec = mario.node.PullSecrets('your-pull-secret')
 
 def hello_world_pipeline(arg1: int, arg2: str):
-  	"""optional description"""
+  """optional description"""
     sec()
     v = vol()
     f['/mnt/data/'] = v
