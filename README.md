@@ -2,6 +2,99 @@
 
 Make Kubeflow pipelines intuitive
 
+## Kubeflow vs Mario
+
+### With Kubeflow
+
+```python
+import kfp
+import kfp.dsl as dsl
+import kubernetes as k8s
+```
+
+#### Components
+
+Components are saved as Yaml files:
+
+```yaml
+name: hello world
+description: import numpy and print out two args
+
+inputs:
+- name: arg1
+  type: Integer
+  description: arg 1 type int
+- name: arg2
+  type: String
+  description: arg 2 type string
+
+implementation:
+  container:
+    image: image:tag
+    command: [python3, /helloworld/main.py]
+    args: [
+      --arg1, {inputValue: arg1},
+      --arg2, {inputValue: arg2}
+    ]
+```
+
+Then load it to get factory function and call the function to get a component
+
+```python
+comp_op = kfp.components.load_component_from_file('comp.yaml')
+op = comp_op(arg1, arg2)
+```
+
+#### Mount volume
+
+```python
+pvc = k8s.client.V1PersistentVolumeClaimVolumeSource(claim_name='some-name', read_only=False)
+op.add_volume(k8s.client.V1Volume(name='human-name', persistent_volume_claim=pvc))
+op.add_volume_mount(k8s.client.V1VolumeMount(mount_path='/mnt/data/', name='human-name'))
+```
+
+#### Pipeline
+
+```python
+@dsl.pipeline('pipeline name', 'descriptions')
+def hello_world_pipeline(arg1: int, arg2: str):
+    op = comp_op(arg1, arg2)
+    op.add_volume(k8s.client.V1Volume(name='human-name', persistent_volume_claim=pvc))
+    op.add_volume_mount(k8s.client.V1VolumeMount(mount_path='/mnt/data/', name='human-name'))
+    dsl.get_pipeline_conf().set_image_pull_secrets(
+        [k8s.client.V1LocalObjectReference(name="your-pull-secret")])
+```
+
+#### Save to file
+
+```python
+kfp.compiler.Compiler().compile(hello_world_pipeline, 'test-hello-world-pvc.yaml')
+```
+
+### With Mario
+
+```python
+import mario
+
+vol = mario.node.VolumeLoad('some-name')
+f = mario.node.Compute('hello world', 
+                       'image:tag',
+                       command=['python3', '/helloworld/main.py'], 
+                       arg_names=['arg1', 'arg2'])
+sec = mario.node.PullSecrets('your-pull-secret')
+
+def hello_world_pipeline(arg1: int, arg2: str):
+  """optional description"""
+    sec()
+    v = vol()
+    f['/mnt/data/'] = v
+    f(arg1, arg2)
+
+mario.script.save(hello_world_pipeline)
+```
+
+## Structure
+
 ```bash
 mario
 ├── __init__.py
@@ -130,97 +223,4 @@ stateDiagram
 ```python
 mario.script.save(sequential_mount, 'optional_name.yaml')
 ```
-
-## Kubeflow vs Mario
-
-### With Kubeflow
-
-```python
-import kfp
-import kfp.dsl as dsl
-import kubernetes as k8s
-```
-
-#### Components
-
-Components are saved as Yaml files:
-
-```yaml
-name: hello world
-description: import numpy and print out two args
-
-inputs:
-- name: arg1
-  type: Integer
-  description: arg 1 type int
-- name: arg2
-  type: String
-  description: arg 2 type string
-
-implementation:
-  container:
-    image: image:tag
-    command: [python3, /helloworld/main.py]
-    args: [
-      --arg1, {inputValue: arg1},
-      --arg2, {inputValue: arg2}
-    ]
-```
-
-Then load it to get factory function and call the function to get a component
-
-```python
-comp_op = kfp.components.load_component_from_file('comp.yaml')
-op = comp_op(arg1, arg2)
-```
-
-#### Mount volume
-
-```python
-pvc = k8s.client.V1PersistentVolumeClaimVolumeSource(claim_name='some-name', read_only=False)
-op.add_volume(k8s.client.V1Volume(name='human-name', persistent_volume_claim=pvc))
-op.add_volume_mount(k8s.client.V1VolumeMount(mount_path='/mnt/data/', name='human-name'))
-```
-
-#### Pipeline
-
-```python
-@dsl.pipeline('pipeline name', 'descriptions')
-def hello_world_pipeline(arg1: int, arg2: str):
-    op = comp_op(arg1, arg2)
-    op.add_volume(k8s.client.V1Volume(name='human-name', persistent_volume_claim=pvc))
-    op.add_volume_mount(k8s.client.V1VolumeMount(mount_path='/mnt/data/', name='human-name'))
-    dsl.get_pipeline_conf().set_image_pull_secrets(
-        [k8s.client.V1LocalObjectReference(name="your-pull-secret")])
-```
-
-#### Save to file
-
-```python
-kfp.compiler.Compiler().compile(hello_world_pipeline, 'test-hello-world-pvc.yaml')
-```
-
-### With Mario
-
-```python
-import mario
-
-vol = mario.node.VolumeLoad('some-name')
-f = mario.node.Compute('hello world', 
-                       'image:tag',
-                       command=['python3', '/helloworld/main.py'], 
-                       arg_names=['arg1', 'arg2'])
-sec = mario.node.PullSecrets('your-pull-secret')
-
-def hello_world_pipeline(arg1: int, arg2: str):
-  """optional description"""
-    sec()
-    v = vol()
-    f['/mnt/data/'] = v
-    f(arg1, arg2)
-
-mario.script.save(hello_world_pipeline)
-```
-
-
 
