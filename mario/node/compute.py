@@ -19,7 +19,8 @@ def _kwargs_to_arglist(
                 arglist.append(value)
     if len(arg_values) > 0:
         raise KeyError(
-            f"Keyword(s) `{', '.join(key for key in arg_values)}` did not match any given args `{', '.join(arg_names)}`"
+            f"Keyword(s) `{', '.join(key for key in arg_values)}` "
+            f"did not match any given args `{', '.join(arg_names)}`"
         )
     return arglist
 
@@ -63,6 +64,15 @@ class Compute(Node):
         )
 
         return self._container_op
+
+    @property
+    def config(self):
+        try:
+            return self._container_op
+        except AttributeError as e:
+            raise RuntimeError(
+                "Config handle has not been created. Please call the compute node first."
+            ) from e
 
     def __getitem__(self, mount_point: str) -> dsl.PipelineVolume:
         if not hasattr(self, "_container_op"):
