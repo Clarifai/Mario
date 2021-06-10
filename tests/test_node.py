@@ -17,3 +17,8 @@ def test_compute_node():
         arg_names=["arg1", "arg2"],
     )
     print(f0)
+
+
+def test_resource_node():
+    secret = mario.node.PullSecrets("pull-secret", "another-pull-secret")
+    print(secret)
