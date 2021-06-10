@@ -91,11 +91,29 @@ class Compute(Node):
         return len(self.volumes)
 
     @classmethod
-    def from_component_yaml(cls, path_to_file):
+    def from_component_yaml(cls, path_to_file: str) -> Node:
         comp = yaml.safe_load(open(path_to_file, "r").read())
         name = comp["name"]
-        imag = comp["image"]
+        imag = comp["implementation"]["container"]["image"]
         args = [d["name"] for d in comp["inputs"]]
-        cmnd = comp["implementation"]["command"]
+        cmnd = comp["implementation"]["container"]["command"]
 
         return cls(name=name, image=imag, command=cmnd, arg_names=args)
+
+    def to_component_yaml(self, path_to_file: str):
+        name = self.name
+        image = self.image
+        command = self.command
+        arg_names = self.arg_names
+        inputs = [{"name": a} for a in arg_names]
+        args = _kwargs_to_arglist(arg_names, {a: {"inputValue": a} for a in arg_names})
+
+        comp = {
+            "name": name,
+            "inputs": inputs,
+            "implementation": {
+                "container": {"image": image, "command": command, "args": args}
+            },
+        }
+
+        yaml.safe_dump(comp, open(path_to_file, "w"))
