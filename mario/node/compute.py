@@ -1,6 +1,9 @@
-from .base import Node
 from typing import *
+
 import kfp.dsl as dsl
+import yaml
+
+from .base import Node
 
 __all__ = ["Compute"]
 
@@ -86,3 +89,13 @@ class Compute(Node):
 
     def __len__(self):
         return len(self.volumes)
+
+    @classmethod
+    def from_component_yaml(cls, path_to_file):
+        comp = yaml.safe_load(open(path_to_file, "r").read())
+        name = comp["name"]
+        imag = comp["image"]
+        args = [d["name"] for d in comp["inputs"]]
+        cmnd = comp["implementation"]["command"]
+
+        return cls(name=name, image=imag, command=cmnd, arg_names=args)
