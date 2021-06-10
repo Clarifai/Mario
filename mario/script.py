@@ -1,3 +1,4 @@
+import os
 import kfp
 from typing import *
 
@@ -5,7 +6,9 @@ from typing import *
 __all__ = ["save"]
 
 
-def save(function: Callable, filename: Optional[str] = None, **kwargs) -> None:
+def save(
+    function: Callable, root: str = ".", filename: Optional[str] = None, **kwargs
+) -> None:
     """Turn annotated Callable class to pipeline function."""
     name = function.__name__
     description = function.__doc__
@@ -14,5 +17,7 @@ def save(function: Callable, filename: Optional[str] = None, **kwargs) -> None:
 
     if not filename:
         filename = name.replace("_", "-") + ".yaml"
+
+    filename = os.path.join(root, filename)
 
     kfp.compiler.Compiler().compile(tmp, filename, **kwargs)
