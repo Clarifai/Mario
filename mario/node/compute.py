@@ -29,13 +29,26 @@ def _kwargs_to_arglist(
 
 
 class Compute(Node):
+    """
+    Compute Node:
+
+    Compute node represents an container op
+    Args:
+        name: name of the compute node
+        image: container image
+        command: command to run
+        arg_names: names of command args
+        mount_point_to_volumes: map from each container mount point to a
+        pipeline volume
+    """
+
     def __init__(
         self,
         name: str,
         image: str,
-        mount_point_to_volumes: Optional[Dict[str, dsl.PipelineVolume]] = None,
         command: Optional[Union[str, List[str]]] = None,
         arg_names: Optional[Union[List[str], Tuple[str]]] = None,
+        mount_point_to_volumes: Optional[Dict[str, dsl.PipelineVolume]] = None,
     ):
         super().__init__()
         self.name = name
