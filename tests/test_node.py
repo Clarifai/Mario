@@ -49,3 +49,11 @@ def test_pyscript_node():
 
         assert f0.arg_names == f1.arg_names
         assert f0.command == f1.command
+
+    @mario.node.PyScript.with_image("image:tag")
+    def f2(x: int):
+        return x
+
+    f2(x=1)
+
+    assert f2.image == "image:tag"

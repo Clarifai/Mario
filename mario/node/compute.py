@@ -1,3 +1,4 @@
+import functools
 import inspect
 from typing import *
 
@@ -162,3 +163,7 @@ class PyScript(Compute):
     @staticmethod
     def from_component_yaml(*args, **kwargs):
         return Compute.from_component_yaml(*args, **kwargs)
+
+    @classmethod
+    def with_image(cls, image: str):
+        return functools.partial(cls, image=image)
