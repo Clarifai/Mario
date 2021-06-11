@@ -57,3 +57,11 @@ def test_pyscript_node():
     f2(x=1)
 
     assert f2.image == "image:tag"
+
+    @mario.node.PyScript
+    def f3(x: int):
+        return x
+
+    f3(x=1)
+
+    assert "python:3" in f3.image
