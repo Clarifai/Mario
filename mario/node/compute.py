@@ -136,7 +136,7 @@ class Compute(Node):
 class PyScript(Compute):
     def __init__(self, function: Callable, image: Optional[str] = None):
         assert inspect.isfunction(
-            some_func
+            function
         ), f"The first arg should be funciton but got type {type(function)}."
 
         super().__init__(function.__name__, image)
