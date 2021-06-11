@@ -152,11 +152,18 @@ class PyScript(Compute):
 
     def flow(self, **kwargs):
         self._container_op = self.function(**kwargs)
-        specs = self._container_op.to_dict()["componentRef"]["spec"]
-        self.name = specs["name"]
-        self.image = specs["implementation"]["container"]["image"]
-        self.command = specs["implementation"]["container"]["command"]
-        self.arg_names = [d["name"] for d in specs["inputs"]]
+        try:
+            specs = self._container_op.to_dict()["componentRef"]["spec"]
+            self.name = specs["name"]
+            self.image = specs["implementation"]["container"]["image"]
+            self.command = specs["implementation"]["container"]["command"]
+            self.arg_names = [d["name"] for d in specs["inputs"]]
+        except AttributeError:
+            # kfp.components.create_component_from_func behaves
+            # differently in runtime and compile time
+            pass
+        except Exception as e:
+            raise e
 
         return self._container_op
 
