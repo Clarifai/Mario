@@ -1,3 +1,4 @@
+import inspect
 from typing import *
 
 import kfp.dsl as dsl
@@ -129,4 +130,32 @@ class Compute(Node):
             },
         }
 
-        yaml.safe_dump(comp, open(path_to_file, "w"))
+        yaml.safe_dump(comp, open(path_to_file, "w"), sort_keys=False)
+
+
+class PyScript(Compute):
+    def __init__(self, function: Callable, image: Optional[str] = None):
+        assert inspect.isfunction(
+            some_func
+        ), f"The first arg should be funciton but got type {type(function)}."
+
+        super().__init__(function.__name__, image)
+
+        self._function = function
+        self.function = kfp.components.create_component_from_func(
+            function, base_image=image
+        )
+
+    def flow(self, **kwargs):
+        self._container_op = self.function(**kwargs)
+        specs = self._container_op.to_dict()["componentRef"]["spec"]
+        self.name = specs["name"]
+        self.image = specs["implementation"]["container"]["image"]
+        self.command = specs["implementation"]["container"]["command"]
+        self.arg_names = [d["name"] for d in specs["inputs"]]
+
+        return self._container_op
+
+    @classmethod
+    def from_component_yaml(cls, *args, **kwargs):
+        return super(PyScript, cls).from_component_yaml(*args, **kwargs)
