@@ -1,7 +1,7 @@
 import os
-import kfp
 from typing import *
 
+import kfp
 
 __all__ = ["save"]
 
@@ -9,7 +9,7 @@ __all__ = ["save"]
 def save(
     function: Callable, root: str = ".", filename: Optional[str] = None, **kwargs
 ) -> None:
-    """Turn annotated Callable class to pipeline function."""
+    """Turn an annotated Callable to pipeline function."""
     name = function.__name__
     description = function.__doc__
 

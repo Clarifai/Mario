@@ -1,6 +1,7 @@
 import inspect
 from typing import *
 
+import kfp
 import kfp.dsl as dsl
 import yaml
 
