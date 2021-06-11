@@ -14,6 +14,6 @@ setup(
     packages=find_packages(exclude=["tests"]),
     long_description=long_description,
     long_description_content_type="text/markdown",
-    install_requires=["kfp", "kubernetes", "yaml"],
+    install_requires=["kfp", "kubernetes", "PyYAML"],
     license="MIT",
 )
