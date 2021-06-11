@@ -6,7 +6,7 @@ import yaml
 
 from .base import Node
 
-__all__ = ["Compute"]
+__all__ = ["Compute", "PyScript"]
 
 
 def _kwargs_to_arglist(
