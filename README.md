@@ -1,5 +1,7 @@
 # Mario
 
+[![test](https://github.com/chenchao-clarifai/Mario/actions/workflows/unittest.yaml/badge.svg)](https://github.com/chenchao-clarifai/Mario/actions/workflows/unittest.yaml)
+
 Make Kubeflow pipelines intuitive
 
 ## Kubeflow vs Mario
