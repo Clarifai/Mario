@@ -28,7 +28,7 @@ def test_pull_secret_node():
 
 
 def test_pyscript_node():
-    def pyfunc(x, y):
+    def pyfunc(x: int, y: float):
         return x * y
 
     f0 = mario.node.PyScript(pyfunc, image="image:tag")
@@ -36,9 +36,9 @@ def test_pyscript_node():
 
     with tempfile.TemporaryDirectory() as d:
         f0.to_component_yaml(os.path.join(d, "f0.yaml"))
-
         f1 = mario.node.PyScript.from_component_yaml(os.path.join(d, "f0.yaml"))
 
         f1(x=2, y=3.0)
 
-        assert str(f0) == str(f1)
+        assert f0.arg_names == f1.arg_names
+        assert f0.command == f1.command

@@ -135,6 +135,8 @@ class Compute(Node):
 
 
 class PyScript(Compute):
+    """Compute Node using python script as entrypoint."""
+
     def __init__(self, function: Callable, image: Optional[str] = None):
         assert inspect.isfunction(
             function
@@ -157,6 +159,6 @@ class PyScript(Compute):
 
         return self._container_op
 
-    @classmethod
-    def from_component_yaml(cls, *args, **kwargs):
-        return super(PyScript, cls).from_component_yaml(*args, **kwargs)
+    @staticmethod
+    def from_component_yaml(*args, **kwargs):
+        return Compute.from_component_yaml(*args, **kwargs)
