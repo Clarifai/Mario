@@ -1,6 +1,7 @@
-import kfp.dsl as dsl
-from typing import *
 import warnings
+from typing import *
+
+import kfp.dsl as dsl
 
 __all__ = ["Node"]
 
@@ -16,7 +17,7 @@ class Node:
         self.__name__ = self.__class__.__name__
 
     def flow(self, **kwargs) -> Any:
-        raise NotImplementedError(f"Method `flow` is not implemented.")
+        raise NotImplementedError("Method `flow` is not implemented.")
 
     def __call__(self, *args, **kwargs) -> Any:
         assert (
@@ -47,7 +48,7 @@ class Node:
     def __repr__(self) -> str:
         lines = []
         lines.append(f"{self.__class__.__name__}:")
-        lines.append(" " * self.repr_indent + f"registered volumes:")
+        lines.append(" " * self.repr_indent + "registered volumes:")
         for key, value in self._volume_registry.items():
             lines.append(" " * 2 * self.repr_indent + f"* {key}")
         for key, value in self.__dict__.items():
