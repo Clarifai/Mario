@@ -21,6 +21,14 @@ def test_compute_node():
     )
     print(f0)
 
+    with tempfile.TemporaryDirectory() as d:
+        f0.to_component_yaml(os.path.join(d, "f0.yaml"))
+        f1 = mario.node.Compute.from_component_yaml(os.path.join(d, "f0.yaml"))
+
+        f1(arg1=2, arg2=3.0)
+
+        assert str(f0) == str(f1)
+
 
 def test_pull_secret_node():
     secret = mario.node.PullSecrets("pull-secret", "another-pull-secret")
