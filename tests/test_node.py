@@ -24,7 +24,6 @@ def test_compute_node():
     with tempfile.TemporaryDirectory() as d:
         f0.to_component_yaml(os.path.join(d, "f0.yaml"))
         f1 = mario.node.Compute.from_component_yaml(os.path.join(d, "f0.yaml"))
-
         f1(arg1=2, arg2=3.0)
 
         assert str(f0) == str(f1)
