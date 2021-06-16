@@ -26,7 +26,6 @@ setup(
         "Topic :: Software Development",
         "Topic :: Software Development :: Libraries",
         "Topic :: Software Development :: Libraries :: Python Modules",
-        "Programming Language :: C++",
         "Programming Language :: Python :: 3",
     ],
     keywords="kubeflow pipeline",
