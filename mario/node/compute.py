@@ -152,6 +152,7 @@ class PyScript(Compute):
 
     def flow(self, **kwargs):
         self._container_op = self.function(**kwargs)
+        self._container_op.pvolumes = self._mnt_to_vol
         try:
             specs = self._container_op.to_dict()["componentRef"]["spec"]
             self.name = specs["name"]
