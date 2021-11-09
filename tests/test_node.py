@@ -21,11 +21,10 @@ def test_compute_node():
     )
     v1 = mario.node.VolumeClaim("new-vol", "1Gi")
     v = v1()
-    f0['/mnt/workdir'] = v
+    f0["/mnt/workdir"] = v
     f0(arg1=1, arg2=2)
-    assert f0['/mnt/workdir'] == v
+    assert f0["/mnt/workdir"] == v
     print(f0)
-
 
     f0 = mario.node.Compute(
         "f0",
@@ -53,9 +52,9 @@ def test_pyscript_node():
     f0 = mario.node.PyScript(pyfunc, image="image:tag")
     v1 = mario.node.VolumeClaim("new-vol", "1Gi")
     v = v1()
-    f0['/mnt/workdir'] = v
+    f0["/mnt/workdir"] = v
     f0(x=1, y=1.2)
-    assert f0['/mnt/workdir'] == v
+    assert f0["/mnt/workdir"] == v
 
     with tempfile.TemporaryDirectory() as d:
         f0.to_component_yaml(os.path.join(d, "f0.yaml"))

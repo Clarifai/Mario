@@ -1,7 +1,9 @@
+from typing import *
+
 import kfp.dsl as dsl
 import kubernetes as k8s
+
 from .base import Node
-from typing import *
 
 __all__ = ["PullSecrets", "set_pull_secrets"]
 

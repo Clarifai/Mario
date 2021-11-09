@@ -1,7 +1,9 @@
-from ..volume import claim, load, VolumeMode
-from .base import Node
 from typing import *
+
 import kfp.dsl as dsl
+
+from ..volume import VolumeMode, claim, load
+from .base import Node
 
 __all__ = ["VolumeClaim", "VolumeLoad"]
 
