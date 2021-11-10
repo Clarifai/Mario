@@ -152,7 +152,9 @@ class PyScript(Compute):
 
         src = []
         src.append("# function source code")
-        src.append(inspect.getsource(function))
+        src.append(
+            "\n".join(inspect.getsourcelines(function)[0][1:])
+        )  # skip the decorator @mario.node.PyScript
         src.append("")
         func_argspec = inspect.getfullargspec(function)
         src.append(_get_argparse_source(func_argspec))

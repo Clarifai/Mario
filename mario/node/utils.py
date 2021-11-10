@@ -12,6 +12,9 @@ def _get_argparse_source(argspec: NamedTuple) -> str:
         ), f"Arg {arg} is not annotated. All entrypoint args should be annotated kwargs."
 
     for arg, typ in argspec.annotations.items():
+        if arg == "return":
+            continue
+
         if hasattr(typ, "__origin__"):
             if typ.__origin__ in (list, tuple):
                 nargs = "'+'"
