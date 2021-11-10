@@ -148,7 +148,7 @@ class PyScript(Compute):
             function
         ), f"The first arg should be funciton but got type {type(function)}."
 
-        name = funciton.__name__
+        name = function.__name__
 
         src = []
         src.append("# function source code")
