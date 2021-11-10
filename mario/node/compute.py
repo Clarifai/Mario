@@ -141,7 +141,7 @@ class PyScript(Compute):
     def __init__(
         self,
         function: Callable,
-        image: Optional[str] = None,
+        image: Optional[str] = "python:3.7",
         mount_point_to_volumes: Optional[Dict[str, dsl.PipelineVolume]] = None,
     ):
         assert inspect.isfunction(
@@ -174,3 +174,7 @@ class PyScript(Compute):
     @classmethod
     def with_image(cls, image: str):
         return functools.partial(cls, image=image)
+
+    @classmethod
+    def from_component_yaml(cls, path_to_file: str) -> Node:
+        return Compute.from_component_yaml(path_to_file)
