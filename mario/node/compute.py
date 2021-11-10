@@ -2,11 +2,11 @@ import functools
 import inspect
 from typing import *
 
-import kfp
 import kfp.dsl as dsl
 import yaml
 
 from .base import Node
+from .utils import _get_argparse_source
 
 __all__ = ["Compute", "PyScript"]
 
@@ -70,7 +70,7 @@ class Compute(Node):
             self._mnt_to_vol[mount_point] = pvc
             setattr(self, pvc.name, pvc)
 
-    def flow(self, **kwargs):
+    def flow(self, **kwargs) -> dsl.ContainerOp:
 
         arglist = _kwargs_to_arglist(self.arg_names, kwargs)
 
@@ -138,39 +138,38 @@ class Compute(Node):
 class PyScript(Compute):
     """Compute Node using python script as entrypoint."""
 
-    def __init__(self, function: Callable, image: Optional[str] = None):
+    def __init__(
+        self,
+        function: Callable,
+        image: Optional[str] = None,
+        mount_point_to_volumes: Optional[Dict[str, dsl.PipelineVolume]] = None,
+    ):
         assert inspect.isfunction(
             function
         ), f"The first arg should be funciton but got type {type(function)}."
 
-        super().__init__(function.__name__, image)
+        name = funciton.__name__
 
-        self._function = function
-        self.function = kfp.components.create_component_from_func(
-            function, base_image=image
+        src = []
+        src.append("# function source code")
+        src.append(inspect.getsource(function))
+        src.append("")
+        func_argspec = inspect.getfullargspec(function)
+        src.append(_get_argparse_source(func_argspec))
+        src.append("# args are parsed in to dict `kwargs` \n")
+        src.append(f"{name}(**kwargs)")
+
+        source = "\n".join(src)
+        command = ["python3", "-c", source]
+        args = func_argspec.args
+
+        super().__init__(
+            name=name,
+            image=image,
+            command=command,
+            arg_names=args,
+            mount_point_to_volumes=mount_point_to_volumes,
         )
-
-    def flow(self, **kwargs):
-        self._container_op = self.function(**kwargs)
-        self._container_op.pvolumes = self._mnt_to_vol
-        try:
-            specs = self._container_op.to_dict()["componentRef"]["spec"]
-            self.name = specs["name"]
-            self.image = specs["implementation"]["container"]["image"]
-            self.command = specs["implementation"]["container"]["command"]
-            self.arg_names = [d["name"] for d in specs["inputs"]]
-        except AttributeError:
-            # kfp.components.create_component_from_func behaves
-            # differently in runtime and compile time
-            pass
-        except Exception as e:
-            raise e
-
-        return self._container_op
-
-    @staticmethod
-    def from_component_yaml(*args, **kwargs):
-        return Compute.from_component_yaml(*args, **kwargs)
 
     @classmethod
     def with_image(cls, image: str):
